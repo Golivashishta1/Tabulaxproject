@@ -1,0 +1,275 @@
+Food Ordering System Lab Guide
+Q I: Software Requirement Specification (SRS) [10 Marks]
+
+Scenario:
+The cafeteria management wants a Food Ordering System that enables students and faculty to order food online, use digital payments, and receive real-time order status updates. The system should support both dine-in and take-away options, while allowing administrators to manage the menu.
+
+Step 1: Abstract (4M)
+
+Write a concise paragraph about the system.
+
+Sample Answer:
+
+The Food Ordering System is a web-based application designed to streamline food ordering for students and faculty. It enables users to view menus, place orders for dine-in or take-away, make digital payments, and track real-time order status. Administrators can manage menu items, pricing, and orders efficiently. The system aims to improve the convenience, reduce manual processing, and enhance the overall cafeteria experience.
+
+Step 2: Functional Requirements (2M)
+Functionality	Description
+User Login/Registration	Students/faculty can register and log in.
+Browse Menu	View categories, items, and prices.
+Place Order	Select items, choose dine-in/take-away, and confirm order.
+Payment Gateway	Make payments digitally (credit/debit, UPI).
+Order Tracking	Receive real-time updates on order status.
+Admin Panel	Add, update, delete menu items, view orders.
+Step 3: Non-Functional Requirements (2M)
+Requirement	Description
+Performance	System should handle 500 concurrent users.
+Scalability	Easy to add new menus, categories, and features.
+Security	Secure authentication and encrypted payments.
+Usability	Simple UI for students, faculty, and admins.
+Reliability	Minimal downtime and proper error handling.
+Step 4: Identification of Users (2M)
+User	Role
+Student	Orders food, tracks status, makes payments
+Faculty	Orders food, tracks status, makes payments
+Administrator	Manages menu, prices, and order processing
+Q II: Maven Web Application Development [30 Marks]
+Step 1: Download & Setup Project
+
+Open Git Bash in your workspace.
+
+Clone the repo:
+
+git clone https://github.com/KumbhamBhargavi75/FoodSystem.git
+cd FoodSystem
+
+
+Open Eclipse → File → Import → Existing Maven Project → select FoodSystem folder.
+
+Step 2: pom.xml Analysis & Updates
+a. <finalName> issue
+<finalName>Food-System</finalName>
+
+
+Generated artifact: Food-System.war
+
+Problem: Tomcat deployment may fail if artifact name has uppercase, spaces, or special characters.
+
+Fix: Use:
+
+<finalName>food-system</finalName>
+
+b. List project files
+ls -R
+
+
+Expected output:
+
+pom.xml
+src/
+README.md
+
+c. JUnit dependency without version
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+</dependency>
+
+
+Maven tries to resolve latest version → may fail.
+
+Fix: Specify version:
+
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.13.2</version>
+    <scope>test</scope>
+</dependency>
+
+d. Typo in <artifactId>
+<artifactId>mysql-connector</artifactld>  <!-- typo -->
+
+
+Maven error: Non-resolvable parent POM or dependency.
+
+Fix: Correct spelling.
+
+e. Changing <packaging> to pom
+
+Maven assumes it’s a parent POM, not a web app → WAR won’t be generated.
+
+Impact: Cannot deploy web project to Tomcat.
+
+f. MySQL Connector error
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector</artifactId>
+    <version>8.0.28</version>
+</dependency>
+
+
+Correct Maven coordinates:
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.28</version>
+</dependency>
+
+g. Tomcat plugin missing configuration
+<plugin>
+    <artifactId>tomcat7-maven-plugin</artifactId>
+    <version>2.2</version>
+</plugin>
+
+
+Missing <groupId> → Maven cannot locate plugin.
+
+Correct:
+
+<plugin>
+    <groupId>org.apache.tomcat.maven</groupId>
+    <artifactId>tomcat7-maven-plugin</artifactId>
+    <version>2.2</version>
+</plugin>
+
+h. <url> tag misuse
+
+<url> is for project homepage, not deployment.
+
+localhost:8080/FoodSystem → incorrect.
+
+Correct:
+
+<url>https://github.com/username/FoodSystem</url>
+
+i. <scope> removed
+
+If <scope>provided</scope> for servlet API is removed → Tomcat may fail with class conflicts.
+
+Project URL:
+
+http://localhost:8080/FoodSystem-0.0.1-SNAPSHOT
+
+
+Generated WAR name includes version.
+
+j. ${project.artifactId}
+<finalName>${project.artifactId}</finalName>
+
+
+WAR generated: FoodSystem.war
+
+Deployment URL:
+
+http://localhost:8080/FoodSystem
+
+k. SNAPSHOT version
+
+Maven treats 0.0.1-SNAPSHOT as in-development.
+
+Impacts dependencies → always fetch latest snapshot from repo.
+
+l. Add Servlet API dependency
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>3.1.0-b05</version>
+    <scope>provided</scope>
+</dependency>
+
+m. Run Maven
+mvn clean install
+
+
+Expected output:
+
+BUILD SUCCESS
+
+Q III: Git & GitHub Integration [30 Marks]
+Step 1: Initialize Git
+git init
+
+Step 2: Configure user
+git config --global user.name "Akash Kasam"
+git config --global user.email "akash@example.com"
+
+Step 3: Connect to GitHub
+git remote add origin https://github.com/<username>/FoodSystem.git
+
+Step 4: Commit changes
+git add .
+git commit -m "Added Order Service for Food Ordering System"
+
+Step 5: Branch operations
+git checkout -b feature/payment   # create & switch
+git reset temp.txt                 # unstage temp.txt
+git remote -v                      # list remotes
+
+Step 6: Stash & merge
+git stash
+git pull origin feature/payment
+git stash pop
+git merge feature/Reviews
+
+Step 7: Clone & push
+git clone https://github.com/<username>/FoodSystem.git
+git push origin feature/real-time-status
+
+Step 8: SSH keys
+ssh-keygen -t rsa -b 4096 -C "akash@example.com"
+cat ~/.ssh/id_rsa.pub             # add key to GitHub
+
+Step 9: Apply patch
+git apply fix.patch
+git add .
+git commit -m "Applied CSS fix from patch"
+
+Q IV: Docker Containerization [20 Marks]
+Step 1: Dockerfile
+# Dockerfile
+FROM tomcat:9.0
+COPY target/FoodSystem.war /usr/local/tomcat/webapps/
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
+
+Step 2: Build & run
+docker build -t foodsystem:1.0 .
+docker run -d -p 8080:8080 --name foodsystem-container foodsystem:1.0
+
+Step 3: Docker Commands
+Task	Command
+Pull nginx	docker pull nginx:latest
+Run nginx	docker run -d -p 8090:80 nginx
+Check port mapping	docker ps
+Stop container	docker stop my-nginx
+Run httpd	docker run -d -p 8080:5000 httpd
+Run Python	docker run -it python:latest bash
+Solve port conflict	Change -p 8080:8080 to -p 8090:8080
+Q V: Docker Compose [10 Marks]
+docker-compose.yml
+version: '3.8'
+services:
+  webapp:
+    image: <dockerhub-username>/foodsystem:latest
+    ports:
+      - "7078:8080"
+    depends_on:
+      - db
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: foodsystem
+    ports:
+      - "5432:5432"
+
+Step 1: Run Compose
+docker-compose up -d
+
+Step 2: Verify
+
+Access app: http://localhost:7078/FoodSystem
+
+Access DB: psql -h localhost -U postgres -d foodsystem

@@ -1,0 +1,208 @@
+Perfect 🚀 You’re asking scenario-based Docker CLI + Dockerfile usage questions.
+Here’s a clear set of **answers with commands + explanations** for each:
+
+---
+
+### 1️⃣ Check if a container is active
+
+```bash
+docker ps
+```
+
+👉 Lists all **running containers**.
+Use `docker ps -a` to see **all containers** (including stopped ones).
+
+---
+
+### 2️⃣ Stop a running container named `web_app`
+
+```bash
+docker stop web_app
+```
+
+👉 Gracefully stops the container.
+If it doesn’t stop, force it:
+
+```bash
+docker kill web_app
+```
+
+---
+
+### 3️⃣ Build an image named `myapi` from a Dockerfile
+
+```bash
+docker build -t myapi .
+```
+
+👉 `-t myapi` tags the image with the name `myapi`.
+`.` means build from the **current directory**.
+
+---
+
+### 4️⃣ Run `web_app` and expose port 5000 → 8080
+
+```bash
+docker run -d -p 8080:5000 --name web_app myapi
+```
+
+👉 `-d` = detached mode.
+`-p hostPort:containerPort` maps ports.
+`--name web_app` names the container.
+
+---
+
+### 5️⃣ Enter the container’s shell
+
+```bash
+docker exec -it web_app /bin/bash
+```
+
+👉 `-it` makes it interactive.
+If the container has only `sh`:
+
+```bash
+docker exec -it web_app sh
+```
+
+---
+
+### 6️⃣ Delete an image called `old_api`
+
+```bash
+docker rmi old_api
+```
+
+👉 Removes the image.
+If a container is using it, stop & remove the container first.
+
+---
+
+### 7️⃣ Check logs of a container
+
+```bash
+docker logs web_app
+```
+
+👉 Shows the container’s logs.
+Use `-f` to **follow logs in real time**:
+
+```bash
+docker logs -f web_app
+```
+
+---
+
+### 8️⃣ Start a container in the background
+
+```bash
+docker run -d myapi
+```
+
+👉 `-d` makes it run in detached mode.
+
+---
+
+### 9️⃣ Check which container uses port 3000
+
+```bash
+docker ps --filter "publish=3000"
+```
+
+or:
+
+```bash
+docker ps -a | grep 3000
+```
+
+---
+
+### 🔟 Tag an existing image
+
+```bash
+docker tag <image_id> myapi:v1
+```
+
+👉 `<image_id>` can be found with `docker images`.
+
+---
+
+### 1️⃣1️⃣ Export an image to `.tar`
+
+```bash
+docker save -o myapi.tar myapi
+```
+
+👉 Creates `myapi.tar` for transfer.
+To load later:
+
+```bash
+docker load -i myapi.tar
+```
+
+---
+
+### 1️⃣2️⃣ Restart container automatically on crash
+
+```bash
+docker run -d --restart always myapi
+```
+
+👉 Policies: `no`, `always`, `on-failure`, `unless-stopped`.
+
+---
+
+### 1️⃣3️⃣ Monitor CPU & RAM usage
+
+```bash
+docker stats
+```
+
+👉 Shows live CPU, RAM, and network usage.
+
+✅ **Limit RAM**:
+
+```bash
+docker run -m 512m myapi
+```
+
+(limits memory to 512MB)
+
+✅ **Measure actual usage**:
+Use `docker stats` or inspect cgroups:
+
+```bash
+docker inspect web_app | grep Memory
+```
+
+---
+
+### 1️⃣4️⃣ Run a shell command before starting app
+
+In **Dockerfile**, use `CMD` or `ENTRYPOINT`:
+
+```dockerfile
+CMD ["sh", "-c", "echo Hello && python app.py"]
+```
+
+👉 Runs `echo Hello` before starting the app.
+
+---
+
+### 1️⃣5️⃣ Create custom Nginx image with static files
+
+**Dockerfile:**
+
+```dockerfile
+FROM nginx:alpine
+COPY ./static /usr/share/nginx/html
+```
+
+Build & run:
+
+```bash
+docker build -t mynginx .
+docker run -d -p 8080:80 mynginx
+```
+
+👉 Copies your static files into Nginx’s web root.

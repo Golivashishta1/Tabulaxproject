@@ -1,0 +1,943 @@
+ChatGPT said:
+
+Perfect 👍 thanks for clarifying.
+That means in your lab internal, you’ll only touch:
+
+Eclipse IDE (with Maven integration)
+
+Maven CLI (inside Eclipse’s Terminal or Git Bash)
+
+Docker CLI (for containerization & compose)
+
+No need to worry about VS Code or other tools.
+
+👉 The best way is: I’ll break each question (Q2 → Q5) into steps you actually click or type inside Eclipse/Maven/Docker, so you can literally follow them during your internal.
+
+Would you like me to start now with Q2 (Maven Java Application Development) and write it step-by-step in Eclipse + Maven + Docker format?
+
+You said:
+yes
+ChatGPT said:
+
+Great — let’s start with Q2 (Maven Java Application Development).
+I’ll write it exactly how you will do in Eclipse + Maven CLI, step by step.
+
+Q2 — Maven Java Application Development (30 Marks)
+
+📌 Repository: HospitalMgmtSystem
+
+Step 1: Download the given repository and list files (3M)
+
+In Eclipse (GUI):
+
+Open Eclipse → File > Import > Git > Projects from Git > Clone URI.
+
+Paste:
+
+https://github.com/KumbhamBhargavi75/HospitalMgmtSystem.git
+
+
+Select master/main branch, click Next → Import as Maven project.
+
+Once imported, you’ll see the files in Project Explorer.
+
+In Git Bash (alternative if asked):
+
+git clone https://github.com/KumbhamBhargavi75/HospitalMgmtSystem.git
+cd HospitalMgmtSystem
+ls -R
+
+Step 2: Run mvn clean package (3M)
+
+In Eclipse (GUI):
+
+Right-click project → Run As > Maven Build…
+
+In the Goals box type:
+
+clean package
+
+
+Click Run.
+
+Meaning:
+
+clean → deletes the target/ folder (removes old builds).
+
+package → compiles source, runs tests, and creates .war file inside target/.
+
+Phase error?
+
+If pom.xml has issues (missing <packaging> or wrong plugin versions), Maven may throw a lifecycle phase error. This happens if the build phases are misconfigured.
+
+Step 3: Add dependency servlet-api version 2.5 (3M)
+
+In Eclipse:
+
+Open pom.xml → switch to Dependencies tab → Add…
+OR open pom.xml (XML view) and paste inside <dependencies>:
+
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>servlet-api</artifactId>
+    <version>2.5</version>
+    <scope>provided</scope>
+</dependency>
+
+
+Save file → Eclipse auto downloads the JAR.
+
+Step 4: Error with JDK 21 (2M)
+
+Maven project may fail because older code/plugins expect lower Java versions (like 1.8 or 11).
+
+To fix: Add Java compiler plugin in pom.xml:
+
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
+Step 5: Incomplete JUnit dependency (3M)
+
+If only written as:
+
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+</dependency>
+
+
+👉 Maven will fail because no <version> is specified.
+
+✅ Fix by adding version + scope:
+
+<dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.13.2</version>
+    <scope>test</scope>
+</dependency>
+
+Step 6: WAR file name issue (3M)
+
+Generated name: hospitalmgmtsystem-0.0.1-SNAPSHOT.war
+You want: HospitalMgmtSystem.war.
+
+👉 Add this in pom.xml:
+
+<build>
+    <finalName>HospitalMgmtSystem</finalName>
+</build>
+
+Step 7: Add Servlet API 4.0.0-b01 (2M)
+
+Inside <dependencies>:
+
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>4.0.0-b01</version>
+    <scope>provided</scope>
+</dependency>
+
+Step 8: Update tomcat7-maven-plugin dependencies (2M)
+
+Add inside <plugins>:
+
+<plugin>
+    <groupId>org.apache.tomcat.maven</groupId>
+    <artifactId>tomcat7-maven-plugin</artifactId>
+    <version>2.2</version>
+    <configuration>
+        <path>/HospitalMgmtSystem</path>
+        <port>8080</port>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.0-b01</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</plugin>
+
+
+✅ Maven will still build, but tests may fail if incompatible with Servlet 4.0.
+
+Step 9: JRE vs JDK issue (2M)
+
+If running on JRE only, compilation fails:
+
+[ERROR] No compiler is provided in this environment.
+
+
+✅ Solution: Ensure Eclipse → Window > Preferences > Installed JREs → Select JDK 1.8 or 11, not JRE.
+
+Step 10: <path>/${project.build.finalName}</path> (2M)
+
+This may fail because Maven expands to /hospitalmgmtsystem-0.0.1-SNAPSHOT.
+✅ Better:
+
+<path>/HospitalMgmtSystem</path>
+
+Step 11: Packaging issue (2M)
+
+If you see:
+
+<packaging>jar</packaging>
+
+
+👉 Change to:
+
+<packaging>war</packaging>
+
+
+Because this project is for Tomcat deployment.
+
+Step 12: Wrong URL in pom.xml (3M)
+
+If written as:
+
+<url>http://maven.java.org12</url>
+
+
+👉 Wrong because that site doesn’t exist.
+
+✅ Correct usage: The <url> tag specifies the project homepage, e.g.:
+
+<url>https://github.com/KumbhamBhargavi75/HospitalMgmtSystem</url>
+
+Step 13: Push fixed pom.xml to GitHub (3M)
+
+In Eclipse:
+
+Save pom.xml.
+
+Right-click project → Team > Commit… → add message like “Fixed pom.xml dependencies and build config”.
+
+Commit and Push.
+
+In Git Bash:
+
+git add pom.xml
+git commit -m "Fixed pom.xml dependencies and build config"
+git push origin main
+
+
+✅ That covers Q2 fully in Eclipse + Maven.
+
+Do you want me to now continue with Q3 (Git & GitHub integration) in the same step-by-step Eclipse/Git Bash style?
+
+You said:
+give question and commands below
+ChatGPT said:
+You said:
+from Q2 to Q7
+ChatGPT said:
+
+Done — I created a step-by-step lab guide for Q2 → Q5 in Eclipse + Maven + Docker, with all commands and exact steps you can follow during your internal.
+
+Next, I can create Q6 & Q7 (if applicable) and any remaining Docker / Maven tasks in the same style, so your full lab guide is ready. Do you want me to continue with Q6 & Q7?
+
+You said:
+explain everything in detail and show
+ChatGPT said:
+Thought for 23s
+
+Nice — below is a single, complete, detailed step-by-step lab guide you can follow in Eclipse (Maven) + Git Bash + Docker CLI. It covers Q2 → Q5 thoroughly: exact commands you’ll type, what to click in Eclipse, full corrected pom.xml to copy, Dockerfile + docker-compose.yml, Git commands for Q3, and troubleshooting (common errors + exact fixes). Follow this in order in your lab.
+
+# Quick environment checklist (before you start)
+
+Eclipse (with Maven / Git plugins installed)
+
+Java JDK installed (not just a JRE). If you have JDK 21, keep it — I'll show how to configure.
+
+Maven (Eclipse ships with an embedded Maven but you can use external mvn CLI)
+
+Docker Desktop / Docker CLI installed and running
+
+A GitHub account and Docker Hub account (for pushing images)
+
+Table of contents
+
+Q2 — Maven Java Application Development (detailed)
+
+clone/import repo
+
+fix pom.xml issues (full pom.xml provided)
+
+add dependencies (servlet APIs, junit)
+
+JDK/JRE / maven-compiler fix (why JDK21 fails and how to fix)
+
+run mvn clean package (what it does & expected output)
+
+tomcat plugin + war name + packaging fixes
+
+common errors and fixes
+
+Q3 — Git & Github commands (all requested commands + explanations)
+
+Q4 — Docker containerization (Dockerfile, full commands, redis notes)
+
+Q5 — Docker Compose file (full docker-compose.yml and commands)
+
+Final step-by-step lab runbook — exactly what to type (ordered list)
+
+1) Q2 — Maven Java Application Development (detailed)
+1.1 Clone / Import repository
+
+In Eclipse (recommended for your setup):
+
+File → Import → Git → Projects from Git → Clone URI.
+
+URI: https://github.com/KumbhamBhargavi75/HospitalMgmtSystem.git
+
+Click Next → Choose branch (e.g. main or master) → Next → Finish → Import as Existing Maven Project.
+
+Project will appear in Project Explorer.
+
+Or in Git Bash (if you want terminal):
+
+git clone https://github.com/KumbhamBhargavi75/HospitalMgmtSystem.git
+cd HospitalMgmtSystem
+ls -la
+
+
+You should see pom.xml, src/, possibly WebContent/ or src/main/webapp.
+
+1.2 Inspect the existing pom.xml
+
+Open pom.xml in Eclipse (double click). Use the XML view (not only the form view) so you can paste edits.
+
+Common symptoms seen in this repo:
+
+<packaging>jar</packaging> while project is web app (should be war).
+
+missing <version> for dependencies (e.g., junit without version).
+
+generated war name is hospitalmgmtsystem-0.0.1-SNAPSHOT.war — you want HospitalMgmtSystem.war
+
+compiler errors when using JDK21 (or project configured for older source/target)
+
+tomcat7-maven-plugin config may include <path>/${project.build.finalName}</path> or wrong config.
+
+1.3 Full corrected pom.xml (copy-paste this into your project; edit groupId/artifactId if you want)
+
+This pom.xml sets packaging = war, sets finalName, adds servlet API and junit, and configures compiler plugin (option for JDK 8 or JDK 21 shown). It also configures the tomcat plugin.
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example</groupId>
+  <artifactId>HospitalMgmtSystem</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>HospitalMgmtSystem</name>
+  <description>Hospital Management System - web application</description>
+  <url>https://github.com/KumbhamBhargavi75/HospitalMgmtSystem</url>
+
+  <properties>
+    <!-- choose Java target here. If you are using JDK 8/11 set these accordingly.
+         For JDK 21, set source/target/release to 21 (example below in plugin config). -->
+    <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- If you want to use JDK 21 instead, change the above two to 21 and set <release>21 in plugin. -->
+  </properties>
+
+  <dependencies>
+    <!-- Servlet API - use provided scope because container (Tomcat) provides it -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.0-b01</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- (Optional) older servlet-api 2.5 -- if your app actually needs 2.5, add it,
+         but DO NOT include both active in runtime. Keep only the one matching Tomcat. -->
+    <!--
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
+    -->
+
+    <!-- JUnit for unit tests -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>HospitalMgmtSystem</finalName>
+
+    <plugins>
+      <!-- Compiler plugin: adjust to match your JDK.
+           Example below uses <source>/<target> 1.8. If using JDK21, use <release>21 instead. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven.compiler.plugin.version}</version>
+        <configuration>
+          <!-- Option A: target Java 8 (default safe choice) -->
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+
+          <!-- Option B (if compiling with JDK 21 and you want to target Java 21):
+               <release>21</release> -->
+        </configuration>
+      </plugin>
+
+      <!-- War plugin (defaults usually OK). We keep it explicit. -->
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.2</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
+      <!-- Tomcat7 plugin for running/deploying to Tomcat. Note: tomcat7 plugin is named
+           tomcat7 but can be used with compatible Tomcat versions. If you target Tomcat 9/10,
+           consider using tomcat7-maven-plugin with newer Tomcat or the official Tomcat Maven plugin for newer Tomcat versions. -->
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <!-- context path for the webapp -->
+          <path>/HospitalMgmtSystem</path>
+          <port>8080</port>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+
+
+Notes about the pom.xml above
+
+packaging is war — needed to create a webapp .war.
+
+finalName sets the produced war name to HospitalMgmtSystem.war.
+
+javax.servlet-api:4.0.0-b01 is provided — Tomcat provides the servlet API at runtime; we don't package it into the war.
+
+If your Tomcat is old (Tomcat 7 or 8), and your app targets servlet 2.5/3.0, use appropriate servlet dependency & Tomcat plugin. Do not ship the servlet implementation inside the WAR.
+
+You can change <maven.compiler.source> and <maven.compiler.target> to match your JDK. For JDK21 use <release>21 in the plugin (instead of source/target) with maven-compiler-plugin >=3.10.
+
+1.4 Add a servlet dependency version 2.5 (the exam asked you to add it)
+
+If teacher wants you to explicitly add servlet-api:2.5, add it with provided scope (but be aware of conflicts if you also add servlet 4.0):
+
+<dependency>
+  <groupId>javax.servlet</groupId>
+  <artifactId>servlet-api</artifactId>
+  <version>2.5</version>
+  <scope>provided</scope>
+</dependency>
+
+
+Recommendation: Prefer only one servlet API version that matches the Tomcat you will run.
+
+1.5 Why mvn clean package? what do these goals do, and how to run them
+
+Meaning
+
+mvn clean — removes target/ directory (old compiled classes/artifacts).
+
+mvn package — runs the default lifecycle up to package: validate, compile, test (if tests exist), package (creates war/jar in target/).
+
+Run in Eclipse (GUI):
+
+Right-click the project → Run As → Maven build....
+
+In Goals type clean package → Run.
+
+Run in Git Bash (terminal):
+
+mvn clean package
+
+
+Expected successful output near the end:
+
+[INFO] --- maven-war-plugin:3.3.2:war (default-war) @ HospitalMgmtSystem ---
+[INFO] Building war: /path/to/project/target/HospitalMgmtSystem.war
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+
+
+Phase error case
+If pom.xml has malformed lifecycle or plugin configuration, you could see plugin execution errors or unknown lifecycle phase errors. Usually errors will show clear messages. Fix the pom.xml to valid XML and correct plugin versions.
+
+1.6 Compilation failure with JDK21 — typical cause & fix (2M)
+
+Typical error when project uses only a JRE:
+
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:compile (default-compile) on project HospitalMgmtSystem: Fatal error compiling: invalid target release: 1.8 -> [Help 1]
+
+
+Or:
+
+[ERROR] No compiler is provided in this environment. Perhaps you are running on a JRE rather than a JDK.
+
+
+Why?
+
+Maven needs javac (the Java compiler) present in the Java runtime used by Maven. If Eclipse or environment points to a JRE (no compiler) instead of a JDK, compiling fails.
+
+Fixes
+
+In Eclipse: Window → Preferences → Java → Installed JREs. Ensure a JDK is selected (e.g., JavaSE-1.8 JDK or JDK-11 or JDK-21). Also check Project → Properties → Java Build Path → Libraries and Java Compiler compliance (e.g., 1.8 or 21).
+
+In pom.xml: set maven-compiler plugin to match the JDK:
+
+For JDK21:
+
+<configuration>
+  <release>21</release>
+</configuration>
+
+
+and use maven-compiler-plugin version ≥ 3.10 (we used 3.11.0).
+
+Or compile for 1.8/11 by setting <source>/<target> to 1.8/11 and using a matching JDK.
+
+1.7 The junit dependency with empty groupId/artifactId issue (3M)
+
+Given:
+
+<dependency>
+  <groupId></groupId>
+  <artifactId>junit</artifactId>
+</dependency>
+
+
+What happens? Maven will try to resolve it and fail because groupId or version missing. You must specify groupId and version. Correct:
+
+<dependency>
+  <groupId>junit</groupId>
+  <artifactId>junit</artifactId>
+  <version>4.13.2</version>
+  <scope>test</scope>
+</dependency>
+
+1.8 WAR name fix (3M)
+
+If the produced file name is hospitalmgmtsystem-0.0.1-SNAPSHOT.war but you need HospitalMgmtSystem.war, add inside <build>:
+
+<finalName>HospitalMgmtSystem</finalName>
+
+
+This makes the final artifact target/HospitalMgmtSystem.war.
+
+1.9 tomcat7-maven-plugin <path>/${project.build.finalName}</path> — will it work? (2M)
+
+Using ${project.build.finalName} in <path> will expand to something like hospitalmgmtsystem-0.0.1-SNAPSHOT. Typically <path> expects a context path e.g. /HospitalMgmtSystem (leading slash). It will expand but it's not the intended context path format — better to set it explicitly:
+
+<path>/HospitalMgmtSystem</path>
+
+
+Also you may need to configure Tomcat manager credentials (in settings.xml) if using <deploy> goals.
+
+1.10 packaging jar vs war (2M)
+
+If <packaging>jar</packaging> but your app is a webapp for Tomcat you must set:
+
+<packaging>war</packaging>
+
+
+Then run mvn clean package → target/HospitalMgmtSystem.war will be created.
+
+1.11 <url> tag explanation (3M)
+
+If <url>http://maven.java.org12</url> is present — it's invalid/not useful.
+
+Correct purpose: <url> declares the project’s homepage (e.g., project site / GitHub repo). Example:
+
+<url>https://github.com/KumbhamBhargavi75/HospitalMgmtSystem</url>
+
+1.12 Update tomcat7 plugin dependencies completely — will Maven still build? (2M)
+
+You can add transitive dependencies inside <plugin><dependencies>. Maven will still build, but be careful:
+
+If you add a servlet implementation inside plugin dependencies or project dependencies with compile scope, it might conflict with the container's servlet classes at runtime (ClassCast, NoSuchMethodErrors).
+
+During tests (if plugin tries to run an embedded server) version mismatches between plugin Tomcat version and servlet API can cause runtime errors.
+
+Advice: Keep servlet API as provided in project dependencies and don't include a servlet implementation at compile scope.
+
+2) Q3 — Git & GitHub Integration (commands + explanation)
+
+Below are the exact commands you will type (Git Bash) and the equivalent Eclipse steps when relevant.
+
+Discard local changes to a single file (not staged)
+
+git checkout -- path/to/file.java
+
+
+Eclipse: Right-click file → Team → Replace With → HEAD Revision.
+
+You forgot to commit but exported the project; want to pull a new project
+Save changes temporarily:
+
+git stash
+git pull origin main
+git stash pop
+
+
+View commit history (readable)
+
+git log --oneline --graph --decorate --all
+
+
+Create feature/patient branch and switch
+
+git checkout -b feature/patient
+
+
+Upload local commits to remote
+
+git push origin feature/patient
+
+
+(or if already tracking git push)
+
+See all branches (local + remote)
+
+git branch -a
+
+
+Create a file readme.md and check status
+
+touch readme.md
+git status
+
+
+Output will show Untracked files: readme.md.
+
+Pull latest changes and merge into local branch
+
+git pull origin main
+
+
+Push for the first time and set upstream branch
+
+git push -u origin feature/patient
+
+
+You cloned a repo and created a new remote upstream. Configure local repo to push to this new remote
+Add remote and push to it:
+
+git remote add upstream https://github.com/someone/other-repo.git
+# Then to push to it:
+git push -u upstream main
+
+
+Local branch is behind remote; bring local up to date without losing local changes
+
+git fetch origin
+git rebase origin/main
+
+
+Or use merge:
+
+git pull --rebase origin main
+
+
+Delete a remote branch
+
+git push origin --delete patient
+
+
+Apply a .patch file and include it in commit history
+Suppose teammate sent fix.patch:
+
+git apply fix.patch
+git add .
+git commit -m "Apply patch from teammate: fix.patch"
+git push
+
+3) Q4 — Docker containerization (20 Marks)
+3.1 Example Dockerfile — uses Tomcat base and copies WAR
+
+Create file Dockerfile at project root:
+
+# Use an official Tomcat image (Tomcat 9)
+FROM tomcat:9.0
+
+# Remove default webapps (optional)
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+# Copy WAR created by Maven into Tomcat webapps
+COPY target/HospitalMgmtSystem.war /usr/local/tomcat/webapps/ROOT.war
+
+# Expose default Tomcat port
+EXPOSE 8080
+
+# Tomcat starts by default in this image
+
+
+Notes:
+
+We copy the war to ROOT.war so app runs at / (http://host:port/
+). If you want it at /HospitalMgmtSystem, copy to /usr/local/tomcat/webapps/HospitalMgmtSystem.war.
+
+3.2 CLI commands (exact)
+
+Build Docker image named hospital-mgmt
+
+docker build -t hospital-mgmt .
+
+
+List all docker images
+
+docker images
+
+
+Run container mapping host port 9090 to container 8080
+
+docker run -d --name hospital-mgmt-container -p 9090:8080 hospital-mgmt
+
+
+Then open http://localhost:9090/ in browser.
+
+Pull a redis image from Docker Hub and run it
+
+docker pull redis
+docker run -d --name redis-server -p 6379:6379 redis
+
+
+Important correction: Redis is not an HTTP server and does NOT run on http://localhost:8080. It listens on port 6379 (TCP). To verify Redis is running:
+
+docker ps       # shows the container is running
+# or use redis-cli
+docker run -it --rm --network host redis redis-cli -h 127.0.0.1 -p 6379 ping
+# should return: PONG
+
+
+Tag and push image to Docker Hub under your account yourusername
+
+docker tag hospital-mgmt yourusername/hospital-mgmt:latest
+docker push yourusername/hospital-mgmt:latest
+
+
+You forgot to expose port mappings — stop and rerun container with mapping
+
+docker stop hospital-mgmt-container
+docker rm hospital-mgmt-container
+docker run -d --name hospital-mgmt-container -p 9090:8080 yourusername/hospital-mgmt:latest
+
+
+Container is exiting immediately — inspect logs
+
+docker logs hospital-mgmt-container
+
+
+Common causes: Tomcat crashed (misplaced WAR), missing dependencies, wrong Java version inside base image, port conflict, permissions.
+
+Push image to Docker Hub publicly
+
+Ensure you logged in: docker login
+
+Tag and push (see command #5)
+
+On Docker Hub, set repository to public.
+
+Open a shell inside a running container
+
+docker exec -it hospital-mgmt-container /bin/bash
+
+
+(If /bin/bash not available, try /bin/sh.)
+
+Kill the running container
+
+docker kill hospital-mgmt-container
+docker rm hospital-mgmt-container
+
+4) Q5 — Docker Compose (10 Marks)
+
+Create docker-compose.yml in root. The assignment asked for a CampusMgmtSystem + MongoDB — I'll adapt for your Hospital app; port mapping corrected to 7079:8080 (likely what you want instead of 7079:20 which is a typo).
+
+version: '3.8'
+services:
+  campus-app:
+    image: yourusername/campus-app:latest   # replace with your built image or Docker Hub repo
+    ports:
+      - "7079:8080"
+    depends_on:
+      - mongo-db
+    restart: unless-stopped
+
+  mongo-db:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+
+
+Commands:
+
+docker-compose up -d
+docker-compose ps
+docker-compose logs campus-app
+docker-compose down
+
+
+Note: If your app expects a MongoDB URL (e.g., mongodb://mongo-db:27017/dbname), ensure the app’s datasource config uses mongo-db as the hostname (service name) not localhost.
+
+5) Full step-by-step lab runbook (everything you’ll type/click in order)
+
+Follow this exactly in your lab (Eclipse + Git Bash + Docker):
+
+A — Setup & import
+
+Open Eclipse.
+
+File → Import → Git → Projects from Git → Clone URI
+URI: https://github.com/KumbhamBhargavi75/HospitalMgmtSystem.git → Next → Import as Maven project.
+
+Project appears in Project Explorer.
+
+B — Fix pom.xml (copy the provided pom.xml)
+
+In Eclipse, open pom.xml (XML view).
+
+Replace content with the Full corrected pom.xml shown earlier (or apply edits: packaging->war, add finalName, add dependencies, add compiler plugin).
+
+Save.
+
+C — Ensure Eclipse uses a JDK (not JRE)
+
+Window → Preferences → Java → Installed JREs.
+If you see a JRE selected, click Add → choose Standard VM, point to your JDK home, click OK and tick it as default.
+
+Project → Properties → Java Compiler → set compliance level (1.8 or 11 or 21) to match the pom.xml config.
+
+D — Build (Maven)
+
+Option 1 — Eclipse GUI
+
+Right-click project → Run As → Maven build...
+
+Goals: clean package
+
+Click Run.
+Option 2 — Terminal
+
+cd /path/to/HospitalMgmtSystem
+mvn clean package
+
+
+Check for success — look for:
+
+[INFO] BUILD SUCCESS
+[INFO] Building war: /.../target/HospitalMgmtSystem.war
+
+
+If you get an error:
+
+If No compiler is provided ... → fix Eclipse JDK selection (step C).
+
+If invalid release → change maven-compiler plugin to use <release> matching your JDK or change target to 1.8.
+
+E — Inspect target/
+
+Confirm target/HospitalMgmtSystem.war exists.
+
+F — Test locally using tomcat plugin or Docker
+
+Run in embedded tomcat from Maven (optional):
+
+mvn tomcat7:run
+# or
+mvn org.apache.tomcat.maven:tomcat7-maven-plugin:2.2:run
+
+
+If you used Docker, build + run:
+
+docker build -t hospital-mgmt .
+docker run -d --name hospital-mgmt-container -p 9090:8080 hospital-mgmt
+# open http://localhost:9090 in browser
+
+G — Git: commit and push your pom.xml fixes
+git add pom.xml
+git commit -m "Fix pom.xml: packaging=war, add servlet-api, compiler plugin, finalName"
+git push origin main
+
+H — Docker: push image to DockerHub
+docker tag hospital-mgmt yourusername/hospital-mgmt:latest
+docker login
+docker push yourusername/hospital-mgmt:latest
+
+I — Docker Compose (if required)
+
+Create docker-compose.yml and run:
+
+docker-compose up -d
+docker-compose ps
+
+6) Troubleshooting quick cheatsheet (common errors & fixes)
+
+No compiler provided -> running on a JRE: Set Eclipse to JDK and ensure JAVA_HOME points to JDK for CLI as well.
+
+Missing dependency version: Add <version> to dependency (e.g., junit).
+
+Incompatible servlet versions: Make sure you don’t include servlet implementation in your WAR; use provided scope. Align servlet API version with Tomcat version (Tomcat9 → servlet 4.0).
+
+Tomcat plugin deploy failures: Use explicit <path>/HospitalMgmtSystem</path> and configure Manager credentials if using remote Tomcat.
+
+Docker container exits: docker logs <container> to find stacktrace; often WAR failed to unpack or Tomcat crashed due to missing libs or Java version mismatch.
+
+Removed port mapping: Stop container (docker stop + docker rm) and rerun with -p hostPort:containerPort.
+
+7) Extra exam/mark tips (how to write answers under time limits)
+
+For each sub-question, show commands + one example output + one-liner reason. Examiners want commands + explanation.
+
+When asked for pom.xml changes, paste a minimal complete pom.xml (like I did).
+
+When asked to explain an error (JRE/JDK), paste the exact error message and the solution (Eclipse steps).
+
+For Docker-compose, give a short compose file and the exact docker-compose up -d command.
+
+If you want, next I can:
+
+Paste the exact pom.xml into your project on GitHub (I can’t push from here, but I can show the exact git commands to commit & push that file), or
+
+Walk you through the lab in a simulated run by showing exact expected console output for each command (I will state “expected output — you should see …”), or
+
+Create a short checklist PDF you can print for the lab.
+
+Which of those do you want me to do now? (I’ll produce it immediately in this chat.)

@@ -1,0 +1,686 @@
+# 1. Discard local changes (unstaged)
+git checkout -- filename
+# OR (newer syntax)
+git restore filename
+
+# 2. Remove from staging area but keep changes
+git reset HEAD file1.txt
+
+# 3. Fix last commit message (not pushed yet)
+git commit --amend -m "Correct commit message"
+
+# 4. View commit history (readable)
+git log --oneline --graph --decorate --all
+
+# 5. Set global name and email
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+
+# 6. View unstaged changes
+git diff
+
+# 7. Switch to another branch
+git checkout feature/login
+# OR (newer syntax)
+git switch feature/login
+
+# 8. Restore accidentally deleted branch
+git reflog
+git checkout -b feature-ui <commit-id>
+
+# 9. Push commits to remote
+git push origin main
+
+# 10. Fetch changes without merging
+git fetch origin
+
+# 11. Create and switch to new branch
+git checkout -b search-filter
+
+# 12. Remove sensitive file from history
+git filter-repo --path file.txt --invert-paths
+
+# 13. List local + remote branches
+git branch -a
+
+# 14. Merge branch into main
+git checkout main
+git merge feature/signup
+
+# 15. Resolve merge conflicts (steps)
+# 1. Open conflicted file and fix manually
+# 2. git add <file>
+# 3. git commit
+
+# 16. Ignore specific files (add to .gitignore)
+*.log
+node_modules/
+
+# 17. Find who changed a line
+git blame -L 25,25 script.py
+
+# 18. Save work before switching branch
+git stash
+git checkout other-branch
+
+# 19. Restore stashed changes
+git stash pop
+
+# 20. Delete branch locally
+git branch -d feature/test
+
+# 21. Safely delete merged branch
+git branch -d feature-ui
+
+# 22. Force delete unmerged branch
+git branch -D feature-experiment
+
+# 23. Before deleting another branch, ensure you’re not on it
+git checkout main
+git branch -d feature-ui
+
+# 24. Check if branch is merged before deleting
+git branch --merged
+
+# 25. Delete multiple branches at once
+git branch -d feature-a feature-b feature-c
+
+
+==============================
+ Remote Repository Commands
+==============================
+
+# 1. Clone a remote repo
+git clone https://github.com/user/repo.git
+
+# 2. List connected remotes
+git remote -v
+
+# 3. Add a new remote
+git remote add origin https://github.com/user/repo.git
+
+# 4. Remove a remote
+git remote remove origin
+
+# 5. Rename a remote
+git remote rename origin upstream
+
+# 6. Fetch updates (without merging)
+git fetch origin
+
+# 7. Pull changes (fetch + merge)
+git pull origin main
+
+# 8. Push commits
+git push origin main
+
+# 9. Push first time and set upstream
+git push -u origin main
+
+# 10. Change remote URL
+git remote set-url origin https://github.com/user/new-repo.git
+
+# 11. List remote branches
+git branch -r
+
+# 12. Remove deleted remote branches locally
+git fetch --prune
+
+# 13. Fetch a specific branch
+git fetch origin feature/login
+
+# 14. Show detailed remote info
+git remote show origin
+
+# 15. Rebase onto remote branch
+git fetch origin
+git rebase origin/main
+
+MERGE CONFLICTS
+
+1. Error: "rejected - non-fast-forward" when pushing
+
+This happens when the remote branch has commits that your local branch doesn’t.
+
+git fetch origin
+git merge origin/main   # OR use 'git pull --rebase'
+git push origin main
+
+
+ Fetch/merge (or rebase) before pushing so your branch is up to date.
+
+2. Push feature branch without affecting main
+git checkout feature-branch
+git push origin feature-branch
+
+
+ This pushes only your feature branch, not main.
+
+3. Remote repo has new branches, update local repo
+git fetch --all
+git pull
+
+
+ Keeps your repo synced with remote structure and new branches.
+
+4. Avoid merge conflicts when pulling colleague’s changes
+git stash           # Save your local changes
+git pull origin main
+git stash pop       # Reapply your changes
+
+
+ This way you update your branch first, then reapply your changes.
+
+5. Sensitive file (API key) pushed to remote
+# Remove from history
+git filter-repo --path secrets.txt --invert-paths
+
+# Add to .gitignore to avoid future tracking
+echo "secrets.txt" >> .gitignore
+git add .gitignore
+git commit -m "Add secrets.txt to .gitignore"
+
+# Force push clean history
+git push origin main --force
+
+
+This rewrites history, so team members must re-clone.
+
+6. Integrate latest main into feature branch
+git checkout feature-branch
+git fetch origin
+git merge origin/main   # OR git rebase origin/main
+
+
+Keeps feature branch up-to-date with main.
+
+7. Change remote repository URL
+git remote set-url origin https://github.com/user/new-repo.git
+
+ Now pushes go to the new remote.
+
+8. Local branch behind remote branch
+git pull --rebase origin main
+
+
+Keeps your commits on top of remote commits, avoiding merge clutter.
+
+9. Resolve conflicts after pulling
+# Open conflicted files and fix manually
+git add conflicted-file.js
+git commit
+
+
+ You must resolve conflicts and commit before continuing.
+
+10. Delete remote branch
+git push origin --delete feature-branch
+
+
+Safely removes branch from remote.
+Scenario 2: Team Collaboration with GitHub
+
+You’re on feature/ui-update, but main has upstream changes and a teammate gave you a .patch file.
+
+11. Update local main from remote
+git checkout main
+git pull origin main
+
+
+Brings your main branch up to date.
+
+12. Update your feature branch with latest main
+git checkout feature/ui-update
+git merge main
+# OR
+git rebase main
+
+
+Syncs feature branch with main.
+
+13. Push feature branch
+git push origin feature/ui-update
+
+
+If it fails due to conflicts:
+
+git fetch origin
+git merge origin/feature/ui-update
+# Resolve conflicts, then push again
+git push origin feature/ui-update
+
+14. Apply a .patch file
+git apply fix.patch
+git add .
+git commit -m "Applied CSS fix from teammate patch"
+
+
+Applies teammate’s fix into your history.
+
+15. Merge feature into main and push
+git checkout main
+git merge feature/ui-update
+git push origin main
+
+
+Final integration into main branch on GitHub.
+
+
+->MAVEN
+Great set of **Maven scenario-based questions** Sri Hari 👍
+I’ll go through each with **clear commands, explanations, and pom.xml snippets** where needed.
+
+---
+
+# 🔹 Maven Scenario Questions & Answers
+
+---
+
+### **1. Error: `maven-compiler-plugin:3.8.1:compile` failed**
+
+To debug and fix:
+
+```bash
+mvn clean compile -X
+```
+
+✅ `-X` gives detailed stack trace.
+Common fixes:
+
+* Ensure correct **Java version** in `pom.xml`:
+
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <version>3.8.1</version>
+  <configuration>
+    <source>1.8</source>
+    <target>1.8</target>
+  </configuration>
+</plugin>
+```
+
+---
+
+### **2. Dependency not recognized**
+
+Steps:
+
+```bash
+# Check if dependency is downloaded in local repo
+ls ~/.m2/repository/groupId/artifactId/version/
+
+# View dependency tree
+mvn dependency:tree
+
+# Force update dependencies
+mvn clean install -U
+```
+
+---
+
+### **3. Apply teammate’s `.patch` file**
+
+```bash
+git apply bugfix.patch
+mvn clean install
+```
+
+✅ After applying, rebuild project to include patch in Maven build.
+
+---
+
+### **4. Rerun only failed tests**
+
+Maven Surefire plugin stores failed tests in `target/surefire-reports/`.
+To rerun only failed ones:
+
+```bash
+mvn test -Dsurefire.rerunFailingTestsCount=1
+```
+
+Or:
+
+```bash
+mvn surefire:test -Dsurefire.includesFile=target/surefire-reports/failsafe-summary.xml
+```
+
+---
+
+### **5. “Unsupported class version error”**
+
+This means mismatch between Java version used to **compile** and **run**.
+Check `maven-compiler-plugin`:
+
+```xml
+<plugin>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <version>3.8.1</version>
+  <configuration>
+    <source>11</source>
+    <target>11</target>
+  </configuration>
+</plugin>
+```
+
+---
+
+### **6. Change WAR to standalone JAR**
+
+In `pom.xml`:
+
+```xml
+<packaging>jar</packaging>
+```
+
+If executable, add **Maven Shade Plugin**:
+
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-shade-plugin</artifactId>
+  <version>3.2.4</version>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals><goal>shade</goal></goals>
+      <configuration>
+        <transformers>
+          <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+            <mainClass>com.example.Main</mainClass>
+          </transformer>
+        </transformers>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+---
+
+### **7. Change output directory**
+
+```xml
+<build>
+  <directory>build_output</directory>
+</build>
+```
+
+---
+
+### **8. Skip tests during build**
+
+```bash
+mvn clean install -DskipTests
+# Skips running tests but compiles them.
+```
+
+Or:
+
+```bash
+mvn clean install -Dmaven.test.skip=true
+# Skips compiling & running tests.
+```
+
+---
+
+### **9. Generate site report**
+
+```bash
+mvn site
+```
+
+✅ Creates reports in `target/site/`.
+
+---
+
+### **10. Build project and check target/**
+
+```bash
+mvn clean install
+```
+
+Target folder contains:
+
+* `classes/` → compiled `.class` files
+* `test-classes/` → compiled test classes
+* `artifact.jar` / `artifact.war` → final package
+* `surefire-reports/` → test results
+
+---
+
+### **11. Dependency conflicts**
+
+Maven uses **“nearest-wins” strategy** (dependency closest to project in tree wins).
+View conflicts:
+
+```bash
+mvn dependency:tree
+mvn dependency:analyze
+```
+
+To override, use `<dependencyManagement>` in `pom.xml`.
+
+---
+
+### **12. Write & run JUnit test**
+
+Test class → `src/test/java/MyTest.java`
+Run:
+
+```bash
+mvn test
+```
+
+Results:
+
+* Compiled tests → `target/test-classes/`
+* Reports → `target/surefire-reports/`
+
+---
+
+### **13. Executable JAR**
+
+Use **Maven Shade Plugin** (as in Q6) or **Maven Assembly Plugin**:
+
+```xml
+<plugin>
+  <artifactId>maven-assembly-plugin</artifactId>
+  <configuration>
+    <archive>
+      <manifest>
+        <mainClass>com.example.Main</mainClass>
+      </manifest>
+    </archive>
+    <descriptorRefs>
+      <descriptorRef>jar-with-dependencies</descriptorRef>
+    </descriptorRefs>
+  </configuration>
+</plugin>
+```
+
+---
+
+### **14. Use custom JAR**
+
+```bash
+mvn install:install-file -Dfile=custom-lib.jar -DgroupId=com.custom -DartifactId=custom-lib -Dversion=1.0 -Dpackaging=jar
+```
+
+Then add dependency:
+
+```xml
+<dependency>
+  <groupId>com.custom</groupId>
+  <artifactId>custom-lib</artifactId>
+  <version>1.0</version>
+</dependency>
+```
+
+Check with:
+
+```bash
+mvn dependency:tree
+```
+
+---
+
+### **15. Create Maven web project (WAR)**
+
+```bash
+mvn archetype:generate -DgroupId=com.example -DartifactId=myweb -DarchetypeArtifactId=maven-archetype-webapp
+```
+
+Structure:
+
+```
+src/main/java
+src/main/resources
+src/main/webapp/WEB-INF/web.xml
+```
+
+Packaging in `pom.xml`:
+
+```xml
+<packaging>war</packaging>
+```
+
+---
+
+### **16. Build WAR & deploy**
+
+```bash
+mvn clean package
+```
+
+WAR file → `target/myweb.war`
+Deploy → copy WAR into Tomcat’s `webapps/`.
+
+---
+
+### **17. Add JSTL & servlet-api**
+
+```xml
+<dependency>
+  <groupId>javax.servlet</groupId>
+  <artifactId>javax.servlet-api</artifactId>
+  <version>4.0.1</version>
+  <scope>provided</scope>
+</dependency>
+
+<dependency>
+  <groupId>javax.servlet.jsp.jstl</groupId>
+  <artifactId>jstl</artifactId>
+  <version>1.2</version>
+</dependency>
+```
+
+✅ `provided` scope because servlet container (Tomcat) provides it.
+
+---
+
+### **18. Multi-module Maven web project**
+
+Parent `pom.xml`:
+
+```xml
+<packaging>pom</packaging>
+<modules>
+  <module>core</module>
+  <module>web</module>
+</modules>
+```
+
+* `core` → JAR (business logic)
+* `web` → WAR (depends on core module)
+
+---
+
+### **19. Maven web project config**
+
+* Traditional WAR: packaged & deployed to servlet container (Tomcat, Jetty).
+* JAR-based web app: packaged with **embedded server** (Spring Boot style).
+  Configured via `<packaging>` and plugins (WAR vs Shade).
+
+
+POM FILE:
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>demo-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- JUnit for testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Log4j for logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+
+        <!-- Gson for JSON parsing -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Compiler plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+
+            <!-- Shade plugin for creating executable JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.example.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

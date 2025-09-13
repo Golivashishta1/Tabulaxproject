@@ -1,0 +1,320 @@
+FOR SET2
+
+Part 1: Initial Setup and Cloning the Project
+
+Open your terminal or Git Bash.
+
+Clone the repository: This downloads the project files.
+
+Command: git clone https://github.com/kumbham bhargavi75/FoodOrderingSystem
+
+Navigate to the project folder: This is the folder that Git just created.
+
+Command: cd FoodOrderingSystem
+
+Part 2: Importing into Eclipse
+
+Launch Eclipse IDE.
+
+Import the project:
+
+Go to File > Import....
+
+Select Maven > Existing Maven Projects.
+
+Click Next.
+
+Browse and select the project:
+
+Click Browse... and select the FoodOrderingSystem folder you cloned.
+
+Eclipse will automatically detect the pom.xml file.
+
+Click Finish. Eclipse will import the project and start downloading dependencies.
+
+Part 3: Solving the Maven Questions (Q1 to Q12)
+
+You will now perform all the following steps inside Eclipse. Open the pom.xml file in the Eclipse Project Explorer to edit it.
+
+Q3 to Q8 pom changes
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.food.ordering</groupId>
+  <artifactId>food-ordering-system</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>Food Ordering System</name>
+  <url>http://localhost:8080/FoodSystem</url>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.28</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.5.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>Food-System</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+
+Q9: Explain mvn clean.
+
+Action: Explain that mvn clean removes all previous build artifacts by deleting the target folder.
+
+Q10: Explain mvn clean package.
+
+Action: Explain that mvn clean package first cleans the build directory, then compiles, tests, and packages the project into a .war file. The <finalName> tag will determine the name of this file.
+
+Q11: Explain SNAPSHOT version.
+
+Action: Explain that a SNAPSHOT version denotes a project under active development, and Maven will check for updates on every build.
+
+Q12: Add the log4j dependency and run the project.
+
+Action: This question combines a dependency change with the final build.
+
+Add the log4j dependency.
+
+Then, from the terminal, run the final command to verify everything works.
+
+XML
+
+<dependency>
+  <groupId>log4j</groupId>
+  <artifactId>log4j</artifactId>
+  <version>1.2.17</version>
+</dependency>
+Command: mvn clean install
+
+Verification: Look for BUILD SUCCESS in the terminal output.
+
+QIII. Git & GitHub Integration (30M)
+
+1.Initialize Git: git init
+
+2.Save a snapshot:
+
+git add .
+
+git commit -m "Added event registration feature"
+
+3.See current status: git status
+
+4.View commit history: git log
+
+5.View all branches: git branch -a
+
+6.Create and switch to a new branch: git checkout -b new-feature
+
+7.Apply a patch file:
+
+Save the patch file in the repository's root directory.
+
+git apply [patch_file_name.patch]
+
+8.Create, commit, and merge a branch:
+
+git checkout -b online-feedback-feature
+
+git add .
+
+git commit -m "Added feedback functionality"
+
+git checkout main
+
+git merge online-feedback-feature
+
+9.Un-merge last commit: git revert [merge_commit_hash] (to safely undo a pushed merge)
+
+10.Fork-and-pull workflow:
+
+Fork: Click "Fork" on GitHub.
+
+Clone: git clone [your_fork_url]
+
+Create branch: git checkout -b new-branch
+
+Push: git push origin new-branch
+
+Pull Request: Go to GitHub and create a pull request from your fork.
+
+11.Compare local branch with remote: 
+git fetch origin 
+git diff main origin/main
+
+12.Get teammate's branch:
+
+git fetch origin
+git checkout event-feedback
+
+13.See differences in last commit: git show HEAD
+
+
+QIV. Docker Containerization (20M)
+1. Write a Dockerfile:
+
+.Create a Dockerfile with the following content:
+
+Dockerfile
+
+# Stage 1: Build the application
+FROM maven:3.8.1-openjdk-17 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn package -DskipTests
+
+# Stage 2: Create a lightweight runtime image
+FROM openjdk:17-slim
+WORKDIR /app
+COPY --from=build /app/target/*.war app.war
+EXPOSE 8080
+CMD ["java", "-jar", "app.war"]
+
+
+2. List official nginx images:
+
+.docker search nginx (then look for "OFFICIAL" images).
+
+.docker pull nginx
+
+3. Run container and map port:
+
+.docker run -d -p 8080:8080 nginx
+
+4. Check running containers:
+
+.docker ps
+
+5. Check container CPU usage and stop it:
+
+.docker stats [container_id] (for CPU usage)
+
+.docker stop [container_id]
+
+6. Stop a running container, then start it:
+
+.docker stop [container_id]
+
+.docker start [container_id]
+
+7. Pull a Python image and list containers:
+
+.docker pull python
+
+.docker run -d -p 5000:5000 python
+
+.docker ps
+
+8. Run a container, handle a port conflict:
+
+If you run into a port already in use error, you must stop the existing container using that port.
+
+.docker ps (find the container ID)
+
+.docker stop [container_id]
+
+Then re-run your docker run command.
+
+9. Check container status:
+
+.docker ps -a
+
+10. Stop and start a running container:
+
+.docker stop [container_id]
+
+.docker start [container_id]
+
+QV. Docker Compose (10M)
+
+1. Write a docker-compose.yml file:
+
+Create a file named docker-compose.yml in the project's root folder.
+
+Add the following content:
+
+YAML
+
+version: '3.8'
+
+services:
+  food-app:
+    image: your_username/food-app:1.0 # The custom image you build
+    container_name: food-ordering-system-app
+    ports:
+      - "7078:8080"
+  
+  postgresdb:
+    image: postgres:14
+    container_name: food-db
+    environment:
+      POSTGRES_DB: food_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432" # Default port for PostgreSQL
+
+2. Pull a Maven-built Food Ordering System image:
+
+You must first build your image from your Dockerfile.
+
+Command: docker build -t your_username/food-app:1.0 .
+
+3. Run the PostgreSQL container and insert data:
+
+Command: docker-compose up -d
+
+To insert data: You'd need to connect to the PostgreSQL container using a client and execute SQL commands. A simple way to access the container's shell is:
+
+.docker exec -it food-db psql -U user food_db
+
+
+
+

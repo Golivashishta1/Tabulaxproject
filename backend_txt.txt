@@ -1,0 +1,244 @@
+FOR SET3
+
+Q2. Maven Java Application Development
+This question focuses on using Maven for a Java project. You're asked to work with the given GitHub repository.
+1. Clone the repository and list the files:
+
+Bash
+git clone https://github.com/KumbhamBhargav75/HospitalMgmtSystem.git
+cd HospitalMgmtSystem
+ls
+
+The ls command will show you the file structure, including the pom.xml, src directory, and other project files.
+
+2. Update pom.xml and finally execute it:
+This is a bit vague. It likely means you need to add the dependencies and then run a Maven command like mvn clean install to build the project.
+
+Q3 to Q9
+pom.file
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.kmit</groupId>
+  <artifactId>HospitalMgmtSystem</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>HospitalMgmtSystem</name>
+  <url>http://www.example.com</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>HospitalMgmtSystem</finalName>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
+
+lastly mvn clean install
+
+
+Q3. Git and GitHub Integration
+This section tests your knowledge of Git commands.
+
+1. To discard local changes:
+
+.git restore .
+or
+.git checkout .
+
+git restore is the more modern command.
+
+2. To get the log of the project history:
+.git log
+
+To view it in a more concise format:
+.git log --oneline
+
+3. Create and switch to a new branch:
+
+.git branch Feature/patient_dashboard
+.git checkout Feature/patient_dashboard
+Or, in one command:
+.git checkout -b Feature/patient_dashboard
+
+4. Make commits and push to the remote repository:
+
+git add .
+git commit -m "Your meaningful commit message"
+git push origin Feature/patient_dashboard
+
+5. To view all branches (local and remote):
+
+git branch -a
+
+6. How to pull the latest changes from the remote repository:
+First, switch to the main branch: git checkout main. Then pull the changes:
+
+.git pull origin main
+
+7. First-time push to a new remote:
+
+git remote add origin https://github.com/your-username/your-repo.git
+git push -u origin main
+
+8. What happens when you git pull without specifying the remote?
+Git will automatically pull from the branch that your local branch is tracking (the upstream branch). If it's not set, Git will show an error message.
+
+
+Q4. Docker Containerization
+This question asks you to use Docker for the Hospital Management System.
+
+a. Create a Dockerfile:
+This Dockerfile will take the WAR file and run it inside a Tomcat container.
+
+inside the Dockerfile write code
+
+# Use a base image with Tomcat and Java
+FROM tomcat:9.0-jre11-openjdk-slim
+
+# Copy the WAR file from your local machine into the Tomcat webapps directory
+# The project artifact name is HospitalMgmtSystem.war
+COPY target/HospitalMgmtSystem.war /usr/local/tomcat/webapps/
+
+# Expose the port that Tomcat runs on
+EXPOSE 8080
+
+# The default command for the base image is already set to run Tomcat
+# You can override it if needed, but for this use case, it's not necessary.
+CMD ["catalina.sh", "run"]
+
+
+b. Building the Docker Image and pushing to Docker Hub:
+
+1.Build the image:
+
+.docker build -t your-dockerhub-username/hospital-mgmt:latest .
+
+Replace your-dockerhub-username with your actual username. The -t flag tags the image with a name.
+
+2.Push the image to Docker Hub:
+First, log in to Docker Hub: docker login. Then push the image:
+
+.docker push your-dockerhub-username/hospital-mgmt:latest
+
+c. Running the container:
+This command maps the container's port 8080 to your host machine's port 9090.
+
+.docker run -p 9090:8080 -d --name hospital-container your-dockerhub-username/hospital-mgmt:latest
+
+Q5. Docker Compose
+
+Docker Compose is used to manage multi-container applications.
+
+1. Write docker-compose.yml for CampusMgmtSystem and MongoDB:
+
+YAML
+
+version: '3.8'
+
+services:
+  # The application container
+  app:
+    # Use the image you previously pushed to Docker Hub
+    image: your-dockerhub-username/campus-mgmtsystem:latest
+    container_name: campus-mgmt-app
+    # Map the application's port to a host port
+    ports:
+      - "8080:8080"
+    # Link the app to the database service
+    depends_on:
+      - mongodb
+    # Environment variables for the database connection string
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+
+  # The database container
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    # Data persistence for the database
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
+
+for Q2 and Q3 type this commands 
+Bash
+.docker compose up
+To run it in the background:
+
+Bash
+.docker compose up -d
+
+To stop the containers:
+Bash
+.docker compose down
+
+
+
+
+
+
